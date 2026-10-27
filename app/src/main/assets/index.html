@@ -2,11 +2,743 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CMC Connect</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CMC Connect – Prototype</title>
+<style>
+:root{
+  --primary:#3BAAC6;--primary-dark:#2a8ca6;--primary-light:#e6f5f9;
+  --text:#1f3a44;--muted:#6b8790;--bg:#f4f9fb;--card:#fff;
+  --danger:#e5484d;--warn:#f5a524;--ok:#2fb67c;--violet:#7c5cf0;
+  --radius:16px;--shadow:0 4px 18px rgba(30,90,110,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:var(--primary);text-decoration:none}
+h1,h2,h3,h4{line-height:1.25}
+.icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.muted{color:var(--muted)}
+.small{font-size:.82rem}
+.row{display:flex;align-items:center;gap:10px}
+.gap{gap:8px}
+.wrap{flex-wrap:wrap}
+.grow{flex:1}
+.right{text-align:right}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:600;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-outline{border:2px solid var(--primary);color:var(--primary);background:#fff}
+.btn-outline:hover{background:var(--primary-light)}
+.btn-light{background:#fff;color:var(--primary)}
+.btn-ghost{color:var(--primary);background:var(--primary-light)}
+.btn-danger{background:#fdecec;color:var(--danger)}
+.btn-sm{padding:7px 12px;font-size:.85rem;border-radius:10px}
+.btn-block{width:100%}
+.btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;width:100%;padding:12px 16px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.btn-google:hover{background:#f8f9fa}
+.gicon{width:22px;height:22px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#4285F4}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+.card h4{margin-bottom:6px}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:700;background:var(--primary-light);color:var(--primary-dark)}
+.badge.admin{background:#eee9ff;color:var(--violet)}
+.badge.cours{background:#e7f8ef;color:#1b8a5a}
+.badge.etab{background:#fff4e0;color:#b46b00}
+.badge.clubs{background:#ffe9f1;color:#c2185b}
+.badge.urgent{background:#fdecec;color:var(--danger)}
+.badge.ok{background:#e7f8ef;color:#1b8a5a}
+.badge.wait{background:#fff4e0;color:#b46b00}
+.unread{border-left:4px solid var(--primary)}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px}
+.section-head a{font-size:.9rem;font-weight:600}
+.page-title{font-size:1.45rem;margin-bottom:4px}
+.page-sub{color:var(--muted);margin-bottom:18px}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid #d6e6ec;border-radius:12px;background:#fff;outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,170,198,.15)}
+label{display:block;font-size:.88rem;font-weight:600;margin-bottom:6px;color:var(--text)}
+.field{margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr;gap:0 16px}
+.progress{height:8px;background:#dfeef3;border-radius:999px;overflow:hidden}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#6fd0e6);border-radius:999px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.avatar.lg{width:84px;height:84px;font-size:1.8rem}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border-radius:999px;background:#fff;border:1.5px solid #d6e6ec;font-size:.88rem;font-weight:600;white-space:nowrap;color:var(--muted)}
+.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center}
+.stat b{display:block;font-size:1.4rem;color:var(--primary)}
+.stat span{font-size:.78rem;color:var(--muted)}
+.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.qcard{background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;align-items:flex-start;font-weight:600;transition:.2s}
+.qcard:hover{transform:translateY(-2px)}
+.qicon{width:42px;height:42px;border-radius:12px;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center}
+.hero-card{background:linear-gradient(135deg,var(--primary),#2a8ca6);color:#fff;border-radius:20px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.hero-card .icon{width:56px;height:56px;opacity:.9}
+.hero-card p{opacity:.9;font-size:.9rem}
+.event{display:flex;gap:14px;align-items:flex-start}
+.date-block{min-width:64px;background:var(--primary-light);color:var(--primary-dark);border-radius:12px;padding:8px;text-align:center;font-size:.8rem;font-weight:700}
+.date-block b{display:block;font-size:1.3rem}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.timeline{display:flex;justify-content:space-between;margin-top:14px;font-size:.75rem;color:var(--muted)}
+.timeline b{color:var(--text)}
+.list-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #eef4f6}
+.list-item:last-child{border-bottom:none}
+.toggle{position:relative;width:46px;height:26px;background:#cfdfe5;border-radius:999px;transition:.2s;flex-shrink:0}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on{background:var(--primary)}
+.toggle.on::after{transform:translateX(20px)}
+/* Auth */
+.auth{min-height:100vh;display:flex;flex-direction:column}
+.auth-hero{background:var(--primary);color:#fff;padding:50px 24px 90px;text-align:center;position:relative;overflow:hidden}
+.auth-hero h1{font-size:2.2rem;letter-spacing:1px;font-weight:800}
+.auth-hero p{opacity:.95;margin-top:8px}
+.slogan{display:inline-block;margin-top:22px;background:#fff;color:var(--primary);padding:10px 20px;border-radius:12px;font-weight:700;font-style:italic}
+.auth-body{margin-top:-60px;padding:0 16px 40px;display:flex;justify-content:center}
+.auth-card{background:#fff;border-radius:22px;box-shadow:0 10px 40px rgba(20,80,100,.15);padding:28px;width:100%;max-width:520px}
+.auth-card h2{margin-bottom:6px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem;margin:20px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:#e2ecf0}
+.steps{display:flex;gap:8px;margin-bottom:20px}
+.steps span{flex:1;height:6px;border-radius:999px;background:#dfeef3}
+.steps span.on{background:var(--primary)}
+.note{background:var(--primary-light);border-radius:12px;padding:12px 14px;font-size:.85rem;color:var(--primary-dark);display:flex;gap:10px;margin:14px 0}
+/* Shell */
+.shell{min-height:100vh;display:block}
+.sidebar{display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:250px;background:#fff;border-right:1px solid #e2ecf0;padding:22px 16px;gap:4px}
+.brand{font-weight:800;color:var(--primary);font-size:1.25rem;letter-spacing:.5px;padding:0 8px 18px}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:.72rem;letter-spacing:0}
+.nav-link{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;color:var(--muted);font-weight:600;position:relative;width:100%;text-align:left}
+.nav-link:hover{background:var(--bg);color:var(--text)}
+.nav-link.active{background:var(--primary-light);color:var(--primary-dark)}
+.nav-link .dot{margin-left:auto;background:var(--danger);color:#fff;font-size:.7rem;padding:2px 7px;border-radius:999px}
+.sidebar .user-chip{margin-top:auto;display:flex;gap:10px;align-items:center;padding:12px;background:var(--bg);border-radius:14px}
+.main{min-height:100vh;padding:0 0 100px}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(244,249,251,.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 14px;border-bottom:1px solid #e2ecf0}
+.topbar .mobile-brand{font-weight:800;color:var(--primary);letter-spacing:.5px}
+.icon-btn{position:relative;width:42px;height:42px;border-radius:12px;background:#fff;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;color:var(--text)}
+.icon-btn .count{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:.65rem;border-radius:999px;padding:2px 6px;font-weight:700}
+.content{padding:18px;max-width:1100px;margin:0 auto}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2ecf0;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));z-index:30}
+.bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.7rem;font-weight:600;color:var(--muted);padding:4px 8px;border-radius:10px;min-width:56px;position:relative}
+.bottom-nav button.active{color:var(--primary)}
+.bottom-nav button.active .icon{stroke-width:2.5}
+@media(min-width:960px){
+  .sidebar{display:flex}
+  .main{margin-left:250px}
+  .bottom-nav{display:none}
+  .topbar .mobile-brand{display:none}
+  .main{padding-bottom:30px}
+  .content{padding:28px 32px}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .quick{grid-template-columns:repeat(4,1fr)}
+  .form-grid{grid-template-columns:1fr 1fr}
+  .auth-hero{padding:70px 24px 100px}
+  .auth-hero h1{font-size:3rem}
+  .auth-hero{min-height:380px}
+}
+/* Messages */
+.chat-layout{display:grid;grid-template-columns:1fr;gap:14px}
+.conv{background:#fff;border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);margin-bottom:10px;width:100%;text-align:left}
+.conv.active{outline:2px solid var(--primary)}
+.chat-panel{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:460px;overflow:hidden}
+.chat-head{padding:14px 16px;border-bottom:1px solid #eef4f6;display:flex;gap:12px;align-items:center}
+.chat-body{flex:1;padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:420px;background:#f7fbfc}
+.bubble{max-width:78%;padding:10px 14px;border-radius:14px;font-size:.92rem;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.bubble.me{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:4px}
+.bubble.them{align-self:flex-start;border-bottom-left-radius:4px}
+.bubble small{display:block;opacity:.7;font-size:.7rem;margin-bottom:2px}
+.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid #eef4f6}
+.chat-input input{border-radius:999px}
+@media(min-width:900px){.chat-layout{grid-template-columns:340px 1fr}}
+/* Overlay & toast */
+.overlay{position:fixed;inset:0;background:rgba(15,40,50,.45);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding:0}
+.modal{background:#fff;border-radius:22px 22px 0 0;padding:22px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:up .25s ease}
+@media(min-width:700px){.overlay{align-items:center;padding:20px}.modal{border-radius:22px}}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.account{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;width:100%;text-align:left;border:1px solid #eef4f6;margin-bottom:8px}
+.account:hover{background:var(--primary-light)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);font-size:.9rem;animation:up .25s ease;max-width:90vw}
+@media(min-width:960px){.toast{bottom:30px}}
+.search{position:relative;margin-bottom:14px}
+.search .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{padding-left:44px;border-radius:999px}
+.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:800px){.grid-2{grid-template-columns:1fr 1fr}}
+.contact-line{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.9rem;margin-top:6px}
+.contact-line a{color:var(--primary);font-weight:600;word-break:break-all}
+.switch-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eef4f6}
+.switch-row:last-child{border:none}
+</style>
 </head>
-<body style="font-family:sans-serif;padding:24px;color:#1f3a44">
-<h2>Remplacez ce fichier</h2>
-<p>Copiez votre fichier <b>cmc-connect.html</b> (prototype) dans ce dossier et renommez-le <b>index.html</b>.</p>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+
+<script>
+/* ============ ICÔNES (SVG intégrés) ============ */
+const I={
+home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+megaphone:'<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M16 8a5 5 0 0 1 0 8"/>',
+calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+book:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v15H6.5A2.5 2.5 0 0 0 4 19.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+check:'<path d="M20 6 9 17l-5-5"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+chevron:'<path d="m9 18 6-6-6-6"/>',
+back:'<path d="m15 18-6-6 6-6"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+send:'<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+pin:'<path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+x:'<path d="M18 6 6 18M6 6l12 12"/>',
+eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+graduation:'<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/>',
+info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>'
+};
+const ic=(n,c='')=>`<svg class="icon ${c}" viewBox="0 0 24 24">${I[n]}</svg>`;
+
+/* ============ DONNÉES DE DÉMONSTRATION ============ */
+// Coordonnées à remplacer par les données réelles du CMC
+const FILIERES=["Design digital","Gestion des entreprises","Génie industriel","DEV","DEEA","QHSE","Électricité industrielle","IDOCS","IDOSR","Art culinaire"];
+const REGIONS=["Rabat-Salé-Kénitra","Fès-Meknès","Casablanca-Settat","Autre région"];
+const CATS={admin:"Administratif",cours:"Cours",etab:"Établissement",clubs:"Clubs"};
+
+const GOOGLE_ACCOUNTS=[
+  {nom:"Houssam EL Gouadi",email:"houssam.elgouadi@gmail.com",existing:true},
+  {nom:"Fatima Ezzahra Lamzari",email:"fatima.lamzari@gmail.com",existing:false},
+  {nom:"Nouveau stagiaire",email:"nouveau.stagiaire@gmail.com",existing:false}
+];
+const DEMO_USER={nom:"Houssam EL Gouadi",email:"houssam.elgouadi@gmail.com",filiere:"IDOSR",annee:"2ème année",region:"Rabat-Salé-Kénitra",age:"18-22 ans",matricule:"CMC-2024-0142",tel:"",notif:{annonces:true,events:true,admin:true,messages:true}};
+
+let ANNONCES=[
+  {id:1,cat:"admin",titre:"Ouverture des demandes d’attestations de scolarité",date:"27 oct. 2026",texte:"Les demandes se font désormais auprès du service administratif, du lundi au jeudi de 9h à 15h.",urgent:true,auteur:"Administration",lu:false},
+  {id:2,cat:"cours",titre:"Changement de salle – Génie industriel",date:"26 oct. 2026",texte:"Le cours de mécanique du jeudi passe de la salle B2 à la salle C4.",urgent:true,auteur:"M. Karim Benali (formateur)",lu:false},
+  {id:3,cat:"etab",titre:"Journée portes ouvertes des métiers",date:"25 oct. 2026",texte:"Présentation des filières et ateliers ouverts aux stagiaires et aux familles.",urgent:false,auteur:"Direction",lu:true},
+  {id:4,cat:"clubs",titre:"Club photo : séance du jeudi",date:"24 oct. 2026",texte:"Séance pratique de prise de vue. Apportez votre appareil ou votre téléphone.",urgent:false,auteur:"Vie étudiante",lu:false},
+  {id:5,cat:"admin",titre:"Retrait des conventions de stage",date:"22 oct. 2026",texte:"Les conventions signées sont disponibles au bureau administratif.",urgent:false,auteur:"Administration",lu:true}
+];
+let EVENTS=[
+  {id:1,titre:"Journée portes ouvertes des métiers",date:"5 nov.",full:"Jeudi 5 novembre 2026",heure:"09:00 – 15:00",lieu:"Hall principal",max:60,inscrits:38,moi:false},
+  {id:2,titre:"Atelier CV et entretien d’embauche",date:"9 nov.",full:"Lundi 9 novembre 2026",heure:"14:00 – 16:00",lieu:"Salle multimédia",max:25,inscrits:21,moi:false},
+  {id:3,titre:"Forum des stages et de l’emploi",date:"18 nov.",full:"Mercredi 18 novembre 2026",heure:"10:00 – 17:00",lieu:"Cour centrale",max:150,inscrits:97,moi:false},
+  {id:4,titre:"Tournoi sportif inter-filières",date:"22 nov.",full:"Dimanche 22 novembre 2026",heure:"09:30",lieu:"Terrain du CMC",max:80,inscrits:42,moi:false}
+];
+let DEMARCHES=[
+  {id:1,type:"Attestation de scolarité",date:"20 oct. 2026",statut:"Traitée",motif:"Dossier bancaire"},
+  {id:2,type:"Attestation de stage",date:"24 oct. 2026",statut:"En cours",motif:"Recherche de stage"}
+];
+const SERVICES=[
+  {nom:"Service administratif",resp:"Bureau des attestations",horaires:"Lun – Jeu, 9h – 15h",tel:"+212 5 00 00 00 01",mail:"administration@cmc-tamesna.ma",icon:"file"},
+  {nom:"Scolarité",resp:"Suivi des dossiers et inscriptions",horaires:"Lun – Ven, 9h – 16h",tel:"+212 5 00 00 00 02",mail:"scolarite@cmc-tamesna.ma",icon:"book"},
+  {nom:"Stages & emploi",resp:"Conventions et offres",horaires:"Mar – Jeu, 10h – 14h",tel:"+212 5 00 00 00 03",mail:"stages@cmc-tamesna.ma",icon:"briefcase"},
+  {nom:"Vie étudiante",resp:"Clubs, activités et événements",horaires:"Lun – Ven, 9h – 17h",tel:"+212 5 00 00 00 04",mail:"vie.etudiante@cmc-tamesna.ma",icon:"users"},
+  {nom:"Direction",resp:"Annonces officielles",horaires:"Sur rendez-vous",tel:"+212 5 00 00 00 05",mail:"direction@cmc-tamesna.ma",icon:"shield"}
+];
+const FORMATEURS=[
+  {nom:"M. Karim Benali",filiere:"Génie industriel"},
+  {nom:"Mme Salma Idrissi",filiere:"Design digital"},
+  {nom:"M. Youssef Tahiri",filiere:"DEV"},
+  {nom:"Mme Imane Berrada",filiere:"Gestion des entreprises"}
+];
+let CHATS=[
+  {id:0,nom:"Espace de ma filière",sub:"Groupe – IDOSR",msgs:[{me:false,a:"Administration",t:"Rappel : dépôt des dossiers de stage avant le 15 novembre."},{me:false,a:"Vie étudiante",t:"Tournoi inter-filières dimanche 22 nov."}]},
+  {id:1,nom:"M. Karim Benali",sub:"Formateur – Génie industriel",msgs:[{me:false,a:"M. Karim Benali",t:"Bonjour, la salle de mécanique change jeudi."},{me:true,a:"Moi",t:"Bien reçu, merci professeur !"}]},
+  {id:2,nom:"Mme Salma Idrissi",sub:"Formateur – Design digital",msgs:[{me:false,a:"Mme Salma Idrissi",t:"Le projet de maquette est à rendre vendredi."}]}
+];
+
+/* ============ ÉTAT ============ */
+const S={user:null,google:null,filter:"all",chat:0,services:"",edit:false};
+
+/* ============ UTILITAIRES ============ */
+const $=id=>document.getElementById(id);
+const initials=n=>(n||"?").split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
+const first=n=>(n||"").split(" ")[0];
+const go=p=>{location.hash="#"+p};
+function toast(msg){
+  const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2600);
+}
+function openModal(html){$("modal").innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`}
+function closeModal(){$("modal").innerHTML=""}
+const unreadCount=()=>ANNONCES.filter(a=>!a.lu).length;
+
+/* ============ ROUTEUR ============ */
+const PUBLIC=["/","/connexion","/inscription"];
+const APP_PAGES={
+  "/accueil":{title:"Accueil",fn:pageHome},
+  "/annonces":{title:"Annonces",fn:pageAnnonces},
+  "/calendrier":{title:"Calendrier",fn:pageCalendrier},
+  "/demarches":{title:"Mes démarches",fn:pageDemarches},
+  "/annuaire":{title:"Annuaire",fn:pageAnnuaire},
+  "/messages":{title:"Messages",fn:pageMessages},
+  "/profil":{title:"Mon profil",fn:pageProfil}
+};
+function render(){
+  const path=(location.hash||"#/").slice(1).split("?")[0]||"/";
+  if(S.user && (path==="/"||path==="/connexion")){return go("/accueil")}
+  if(!PUBLIC.includes(path) && !S.user){return go("/connexion")}
+  if(PUBLIC.includes(path)){
+    $("app").innerHTML = path==="/" ? pageWelcome() : path==="/connexion" ? pageLogin() : pageRegister();
+  } else {
+    const page=APP_PAGES[path]||APP_PAGES["/accueil"];
+    $("app").innerHTML = shell(path,page);
+  }
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",render);
+
+/* ============ COQUILLE APPLICATION ============ */
+function shell(path,page){
+  const nav=[["/accueil","Accueil","home"],["/annonces","Annonces","megaphone"],["/calendrier","Calendrier","calendar"],["/demarches","Démarches","file"],["/annuaire","Annuaire","book"],["/messages","Messages","message"],["/profil","Mon profil","user"]];
+  const bottom=["/accueil","/annonces","/calendrier","/messages","/profil"];
+  const bottomLabel={"/accueil":"Accueil","/annonces":"Annonces","/calendrier":"Agenda","/messages":"Messages","/profil":"Profil"};
+  const u=S.user;
+  const cnt=unreadCount();
+  return `
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">CMC CONNECT<small>Mieux informés, mieux connectés</small></div>
+      ${nav.map(([p,l,i])=>`<a class="nav-link ${path===p?'active':''}" href="#${p}">${ic(i)}${l}${p==='/annonces'&&cnt?`<span class="dot">${cnt}</span>`:''}</a>`).join("")}
+      <div class="user-chip">
+        <div class="avatar">${initials(u.nom)}</div>
+        <div class="grow"><b style="font-size:.9rem">${u.nom}</b><div class="small muted">${u.filiere} · ${u.annee}</div></div>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <div class="mobile-brand">CMC CONNECT</div>
+        <h2 style="font-size:1.1rem" class="grow">${page.title}</h2>
+        <button class="icon-btn" title="Notifications" onclick="go('/annonces')">${ic('bell')}${cnt?`<span class="count">${cnt}</span>`:''}</button>
+      </header>
+      <main class="content">${page.fn()}</main>
+    </div>
+    <nav class="bottom-nav">
+      ${bottom.map(p=>`<button class="${path===p?'active':''}" onclick="go('${p}')">${ic(nav.find(n=>n[0]===p)[2])}${bottomLabel[p]}${p==='/annonces'&&cnt?`<span style="position:absolute;top:0;right:12px;background:var(--danger);color:#fff;font-size:.6rem;border-radius:999px;padding:1px 5px">${cnt}</span>`:''}</button>`).join("")}
+    </nav>
+  </div>`;
+}
+
+/* ============ PAGES PUBLIQUES ============ */
+function pageWelcome(){
+  return `
+  <div class="auth">
+    <section class="auth-hero">
+      <h1>CMC CONNECT</h1>
+      <p>L’écosystème numérique unifié du CMC Tamesna</p>
+      <span class="slogan">« Mieux informés, mieux connectés. »</span>
+    </section>
+    <div class="auth-body">
+      <div class="auth-card" style="text-align:center">
+        <h2>Bienvenue 👋</h2>
+        <p class="muted" style="margin:8px 0 22px">Toutes vos annonces, démarches et échanges avec vos formateurs au même endroit.</p>
+        <div class="grid-2" style="margin-bottom:14px">
+          <div class="qcard" style="align-items:center;text-align:center">${'<div class="qicon">'+ic('megaphone')+'</div>'}Annonces centralisées</div>
+          <div class="qcard" style="align-items:center;text-align:center">${'<div class="qicon">'+ic('calendar')+'</div>'}Calendrier & inscriptions</div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="go('/inscription')">Créer mon compte</button>
+        <button class="btn btn-outline btn-block" style="margin-top:10px" onclick="go('/connexion')">J’ai déjà un compte</button>
+      </div>
+    </div>
+  </div>`;
+}
+function pageLogin(){
+  return `
+  <div class="auth">
+    <section class="auth-hero" style="min-height:auto;padding-bottom:80px">
+      <h1 style="font-size:1.8rem">CMC CONNECT</h1>
+      <p>Connectez-vous avec votre compte Gmail</p>
+    </section>
+    <div class="auth-body">
+      <div class="auth-card">
+        <button class="btn-link muted small" style="margin-bottom:10px" onclick="go('/')">${ic('back')} Retour</button>
+        <h2>Connexion</h2>
+        <p class="muted">Utilisez votre adresse Gmail institutionnelle ou personnelle.</p>
+        <div style="margin-top:22px">
+          <button class="btn btn-google" onclick="openGooglePicker('login')"><span class="gicon">G</span> Continuer avec Google</button>
+        </div>
+        <div class="divider">ou</div>
+        <form onsubmit="event.preventDefault();openGooglePicker('login')">
+          <div class="field"><label>Adresse Gmail</label><input type="email" placeholder="prenom.nom@gmail.com" required></div>
+          <button class="btn btn-outline btn-block" type="submit">Se connecter</button>
+        </form>
+        <div class="note">${ic('shield')}<span>L’accès est réservé aux stagiaires du CMC Tamesna. Vos données restent confidentielles.</span></div>
+        <p class="small muted" style="text-align:center">Pas encore de compte ? <a href="#/inscription"><b>Créer mon compte</b></a></p>
+      </div>
+    </div>
+  </div>`;
+}
+function pageRegister(){
+  const g=S.google;
+  if(!g){
+    return `
+    <div class="auth">
+      <section class="auth-hero" style="min-height:auto;padding-bottom:80px">
+        <h1 style="font-size:1.8rem">CMC CONNECT</h1>
+        <p>Créer mon compte stagiaire</p>
+      </section>
+      <div class="auth-body"><div class="auth-card">
+        <div class="steps"><span class="on"></span><span></span></div>
+        <p class="small muted">Étape 1 sur 2</p>
+        <h2 style="margin-top:6px">Votre compte Google</h2>
+        <p class="muted">Nous utilisons votre compte Gmail pour vous identifier et vous envoyer les notifications.</p>
+        <div style="margin-top:22px"><button class="btn btn-google" onclick="openGooglePicker('register')"><span class="gicon">G</span> S’inscrire avec Google</button></div>
+        <p class="small muted" style="text-align:center;margin-top:18px">Déjà inscrit ? <a href="#/connexion"><b>Se connecter</b></a></p>
+      </div></div>
+    </div>`;
+  }
+  return `
+  <div class="auth">
+    <section class="auth-hero" style="min-height:auto;padding-bottom:80px">
+      <h1 style="font-size:1.8rem">CMC CONNECT</h1>
+      <p>Finalisez votre profil stagiaire</p>
+    </section>
+    <div class="auth-body"><div class="auth-card">
+      <div class="steps"><span class="on"></span><span class="on"></span></div>
+      <p class="small muted">Étape 2 sur 2</p>
+      <h2 style="margin-top:6px">Votre profil</h2>
+      <div class="row" style="margin:16px 0 20px;padding:12px;background:var(--bg);border-radius:14px">
+        <div class="avatar">${initials(g.nom||g.email)}</div>
+        <div class="grow"><b>${g.nom||"Nouveau stagiaire"}</b><div class="small muted">${g.email}</div></div>
+        <button class="btn btn-sm btn-ghost" onclick="S.google=null;render()">Changer</button>
+      </div>
+      <form onsubmit="event.preventDefault();saveProfil(this)">
+        <div class="form-grid">
+          <div class="field"><label>Nom complet *</label><input name="nom" value="${g.nom||''}" required placeholder="Votre nom complet"></div>
+          <div class="field"><label>Téléphone</label><input name="tel" type="tel" placeholder="06 XX XX XX XX"></div>
+          <div class="field"><label>Tranche d’âge *</label>
+            <select name="age" required><option value="">Choisir…</option><option>Entre 18 et 22 ans</option><option>Entre 23 et 25 ans</option><option>Plus de 25 ans</option></select></div>
+          <div class="field"><label>Région / zone *</label>
+            <select name="region" required><option value="">Choisir…</option>${REGIONS.map(r=>`<option>${r}</option>`).join("")}</select></div>
+          <div class="field"><label>Filière / branche *</label>
+            <select name="filiere" required><option value="">Choisir…</option>${FILIERES.map(f=>`<option>${f}</option>`).join("")}</select></div>
+          <div class="field"><label>Année de formation *</label>
+            <select name="annee" required><option value="">Choisir…</option><option>1ère année</option><option>2ème année</option></select></div>
+          <div class="field" style="grid-column:1/-1"><label>Matricule (facultatif)</label><input name="matricule" placeholder="CMC-XXXX-XXXX"></div>
+        </div>
+        <label class="row small" style="font-weight:400;margin:4px 0 16px"><input type="checkbox" required style="width:auto"> J’accepte les conditions d’utilisation de CMC Connect</label>
+        <button class="btn btn-primary btn-block" type="submit">${ic('check')} Créer mon compte</button>
+      </form>
+    </div></div>
+  </div>`;
+}
+function openGooglePicker(mode){
+  openModal(`
+    <div class="modal-head"><h3>Choisir un compte</h3><button class="icon-btn" style="width:36px;height:36px" onclick="closeModal()">${ic('x')}</button></div>
+    <p class="small muted" style="margin-bottom:14px">Continuer vers CMC Connect</p>
+    ${GOOGLE_ACCOUNTS.map((a,i)=>`
+      <button class="account" onclick="pickAccount(${i})">
+        <div class="avatar">${initials(a.nom)}</div>
+        <div class="grow"><b>${a.nom}</b><div class="small muted">${a.email}</div></div>
+        ${ic('chevron')}
+      </button>`).join("")}
+    <button class="account" onclick="pickAccount(-1)"><div class="avatar" style="background:#eef2f4;color:var(--muted)">+</div><div class="grow"><b>Utiliser un autre compte</b></div></button>
+    <p class="small muted" style="margin-top:12px">Connexion simulée pour la démonstration.</p>
+  `);
+}
+function pickAccount(i){
+  closeModal();
+  if(i===-1){S.google={nom:"",email:"autre.compte@gmail.com"};return go("/inscription")}
+  const acc=GOOGLE_ACCOUNTS[i];
+  if(acc.existing){
+    S.user={...DEMO_USER,nom:acc.nom,email:acc.email};
+    toast(`Bienvenue ${first(acc.nom)} 👋`);
+    return go("/accueil");
+  }
+  S.google={nom:acc.nom,email:acc.email};
+  toast("Compte Google confirmé");
+  go("/inscription");
+}
+function saveProfil(form){
+  const f=Object.fromEntries(new FormData(form).entries());
+  S.user={nom:f.nom,email:S.google.email,filiere:f.filiere,annee:f.annee,region:f.region,age:f.age,matricule:f.matricule||"—",tel:f.tel||"",notif:{annonces:true,events:true,admin:true,messages:true}};
+  S.google=null;
+  toast(`Compte créé, bienvenue ${first(f.nom)} !`);
+  go("/accueil");
+}
+
+/* ============ PAGES APPLICATION ============ */
+function annonceCard(a){
+  return `
+  <article class="card ${a.lu?'':'unread'}">
+    <div class="row wrap gap" style="margin-bottom:8px">
+      <span class="badge ${a.cat}">${CATS[a.cat]}</span>
+      ${a.urgent?`<span class="badge urgent">Urgent</span>`:''}
+      <span class="small muted grow right">${a.date}</span>
+    </div>
+    <h4>${a.titre}</h4>
+    <p class="muted" style="margin-bottom:8px">${a.texte}</p>
+    <p class="small muted" style="margin-bottom:12px">Par ${a.auteur}</p>
+    <div class="row wrap gap">
+      <button class="btn btn-sm ${a.lu?'btn-ghost':'btn-primary'}" onclick="toggleLu(${a.id})">${ic(a.lu?'check':'eye')} ${a.lu?'Lue · confirmée':'Confirmer la lecture'}</button>
+      <button class="btn btn-sm btn-outline" onclick="openReply(${a.id})">${ic('send')} Répondre</button>
+    </div>
+  </article>`;
+}
+function toggleLu(id){
+  const a=ANNONCES.find(x=>x.id===id);a.lu=!a.lu;
+  toast(a.lu?"Lecture confirmée ✔":"Marquée comme non lue");render();
+}
+function openReply(id){
+  const a=ANNONCES.find(x=>x.id===id);
+  openModal(`
+    <div class="modal-head"><h3>Répondre</h3><button class="icon-btn" style="width:36px;height:36px" onclick="closeModal()">${ic('x')}</button></div>
+    <p class="small muted" style="margin-bottom:12px">À propos de : <b>${a.titre}</b></p>
+    <div class="field"><label>Votre message</label><textarea rows="4" id="replyTxt" placeholder="Votre question ou réponse…"></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="sendReply(${id})">${ic('send')} Envoyer à ${a.auteur.split('(')[0].trim()}</button>
+  `);
+}
+function sendReply(id){
+  const v=$("replyTxt").value.trim();
+  if(!v)return toast("Écrivez un message avant d’envoyer");
+  closeModal();
+  const a=ANNONCES.find(x=>x.id===id);a.lu=true;
+  toast("Réponse envoyée ✔");render();
+}
+
+function pageHome(){
+  const u=S.user;
+  const unread=unreadCount();
+  const inscrits=EVENTS.filter(e=>e.moi).length;
+  const encours=DEMARCHES.filter(d=>d.statut!=="Traitée").length;
+  const next=EVENTS.find(e=>e.moi)||EVENTS[0];
+  return `
+  <div class="hero-card">
+    <div>
+      <p>Bonjour, ${first(u.nom)} 👋</p>
+      <h2 style="margin:4px 0 6px">Restez informé, sans effort</h2>
+      <p>${unread?`${unread} annonce(s) à lire aujourd’hui`:'Vous êtes à jour ✔'}</p>
+    </div>
+    ${ic('graduation')}
+  </div>
+  <div class="stats">
+    <a class="stat" href="#/annonces"><b>${unread}</b><span>Non lues</span></a>
+    <a class="stat" href="#/calendrier"><b>${inscrits}</b><span>Événements</span></a>
+    <a class="stat" href="#/demarches"><b>${encours}</b><span>Démarches en cours</span></a>
+  </div>
+  <div class="section-head"><h3>Accès rapide</h3></div>
+  <div class="quick">
+    <a class="qcard" href="#/demarches"><div class="qicon">${ic('file')}</div>Mes démarches</a>
+    <a class="qcard" href="#/annuaire"><div class="qicon">${ic('book')}</div>Annuaire</a>
+    <a class="qcard" href="#/messages"><div class="qicon">${ic('message')}</div>Mes formateurs</a>
+    <a class="qcard" href="#/calendrier"><div class="qicon">${ic('calendar')}</div>Événements</a>
+  </div>
+  <div class="section-head"><h3>Prochain événement</h3><a href="#/calendrier">Voir tout</a></div>
+  <div class="card event">
+    <div class="date-block"><b>${next.date.split(' ')[0]}</b>${next.date.split(' ')[1]||''}</div>
+    <div class="grow"><h4>${next.titre}</h4><p class="small muted">${ic('clock')} ${next.heure} · ${ic('pin')} ${next.lieu}</p></div>
+  </div>
+  <div class="section-head"><h3>Dernières annonces</h3><a href="#/annonces">Tout voir</a></div>
+  ${ANNONCES.slice(0,3).map(annonceCard).join("")}
+  `;
+}
+
+function pageAnnonces(){
+  const tabs=[["all","Toutes"],["admin","Administratif"],["cours","Cours"],["etab","Établissement"],["clubs","Clubs"]];
+  const list=ANNONCES.filter(a=>S.filter==="all"||a.cat===S.filter);
+  return `
+  <h1 class="page-title">Annonces officielles</h1>
+  <p class="page-sub">Une seule source fiable pour toutes les annonces du CMC.</p>
+  <div class="tabs">${tabs.map(([k,l])=>`<button class="tab ${S.filter===k?'active':''}" onclick="S.filter='${k}';render()">${l}</button>`).join("")}</div>
+  ${list.length?list.map(annonceCard).join(""):`<div class="empty">${ic('info')}<p>Aucune annonce dans cette catégorie.</p></div>`}
+  `;
+}
+
+function pageCalendrier(){
+  return `
+  <h1 class="page-title">Calendrier des événements</h1>
+  <p class="page-sub">Inscrivez-vous et confirmez votre présence en un clic.</p>
+  ${EVENTS.map(e=>{
+    const pct=Math.round(e.inscrits/e.max*100);
+    return `
+    <article class="card">
+      <div class="event">
+        <div class="date-block"><b>${e.date.split(' ')[0]}</b>${e.date.split(' ')[1]||''}</div>
+        <div class="grow">
+          <div class="row wrap gap" style="margin-bottom:6px">${e.moi?'<span class="badge ok">Inscrit ✔</span>':''}<span class="small muted">${e.full}</span></div>
+          <h4>${e.titre}</h4>
+          <p class="small muted" style="margin:4px 0 10px">${ic('clock')} ${e.heure} &nbsp; ${ic('pin')} ${e.lieu}</p>
+          <div class="progress"><span style="width:${pct}%"></span></div>
+          <div class="row" style="justify-content:space-between;margin:8px 0 12px"><span class="small muted">${e.inscrits}/${e.max} inscrits</span><span class="small muted">${e.max-e.inscrits} places restantes</span></div>
+          <button class="btn btn-sm ${e.moi?'btn-danger':'btn-primary'}" onclick="toggleEvent(${e.id})">${ic(e.moi?'x':'check')} ${e.moi?'Annuler ma présence':'Confirmer ma présence'}</button>
+        </div>
+      </div>
+    </article>`}).join("")}
+  `;
+}
+function toggleEvent(id){
+  const e=EVENTS.find(x=>x.id===id);
+  if(!e.moi && e.inscrits>=e.max) return toast("Désolé, cet événement est complet");
+  e.moi=!e.moi; e.inscrits+=e.moi?1:-1;
+  toast(e.moi?"Présence confirmée ✔":"Inscription annulée");render();
+}
+
+function pageDemarches(){
+  const pct={"En attente":33,"En cours":66,"Traitée":100};
+  return `
+  <div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+    <div><h1 class="page-title">Mes démarches</h1><p class="page-sub" style="margin:0">Suivez vos demandes d’attestations et de documents.</p></div>
+    <button class="btn btn-primary" onclick="openDemarche()">${ic('plus')} Nouvelle demande</button>
+  </div>
+  ${DEMARCHES.map(d=>`
+    <article class="card">
+      <div class="row wrap gap" style="margin-bottom:6px">
+        <span class="badge ${d.statut==='Traitée'?'ok':'wait'}">${d.statut}</span>
+        <span class="small muted grow right">Déposée le ${d.date}</span>
+      </div>
+      <h4>${d.type}</h4>
+      <p class="small muted">Motif : ${d.motif}</p>
+      <div class="progress" style="margin-top:12px"><span style="width:${pct[d.statut]}%"></span></div>
+      <div class="timeline"><span><b>Reçue</b></span><span class="${d.statut!=='En attente'?'':''}">${d.statut==='En cours'||d.statut==='Traitée'?'<b>En cours</b>':'En cours'}</span><span>${d.statut==='Traitée'?'<b>Prête</b>':'Prête'}</span></div>
+    </article>`).join("")}
+  <div class="note">${ic('info')}<span>Délai moyen de traitement : 48 h ouvrables. Vous serez notifié dès que le document est prêt.</span></div>
+  `;
+}
+function openDemarche(){
+  openModal(`
+    <div class="modal-head"><h3>Nouvelle demande</h3><button class="icon-btn" style="width:36px;height:36px" onclick="closeModal()">${ic('x')}</button></div>
+    <form onsubmit="event.preventDefault();submitDemarche(this)">
+      <div class="field"><label>Type de document *</label>
+        <select name="type" required><option value="">Choisir…</option><option>Attestation de scolarité</option><option>Attestation de stage</option><option>Attestation de réussite</option><option>Convention de stage</option><option>Autre demande</option></select></div>
+      <div class="field"><label>Motif</label><textarea name="motif" rows="3" placeholder="Ex. : dossier bancaire, recherche de stage…"></textarea></div>
+      <div class="field"><label>Mode de réception</label>
+        <select name="mode"><option>Retrait au bureau</option><option>Envoi par e-mail</option></select></div>
+      <button class="btn btn-primary btn-block" type="submit">${ic('send')} Envoyer la demande</button>
+    </form>
+  `);
+}
+function submitDemarche(form){
+  const f=Object.fromEntries(new FormData(form).entries());
+  DEMARCHES.unshift({id:Date.now(),type:f.type,date:"27 oct. 2026",statut:"En attente",motif:f.motif||"—"});
+  closeModal();toast("Demande envoyée ✔");render();
+}
+
+function pageAnnuaire(){
+  return `
+  <h1 class="page-title">Annuaire des services</h1>
+  <p class="page-sub">Joignez rapidement le bon service ou le bon interlocuteur.</p>
+  <div class="search">${ic('search')}<input placeholder="Rechercher un service…" value="${S.services}" oninput="S.services=this.value;drawServices()"></div>
+  <div id="services" class="grid-2"></div>
+  <script>drawServices()<\/script>
+  `;
+}
+function drawServices(){
+  const q=(S.services||"").toLowerCase();
+  const box=$("services");if(!box)return;
+  const list=SERVICES.filter(s=>(s.nom+s.resp).toLowerCase().includes(q));
+  box.innerHTML=list.length?list.map(s=>`
+    <article class="card" style="margin:0">
+      <div class="row" style="margin-bottom:10px"><div class="qicon">${ic(s.icon)}</div><div class="grow"><h4 style="margin:0">${s.nom}</h4><p class="small muted">${s.resp}</p></div></div>
+      <p class="small muted" style="margin-bottom:8px">${ic('clock')} ${s.horaires}</p>
+      <div class="contact-line">${ic('phone')}<a href="tel:${s.tel.replace(/\s/g,'')}">${s.tel}</a></div>
+      <div class="contact-line">${ic('mail')}<a href="mailto:${s.mail}">${s.mail}</a></div>
+    </article>`).join(""):`<div class="empty" style="grid-column:1/-1">Aucun service trouvé.</div>`;
+}
+
+function pageMessages(){
+  const c=CHATS.find(x=>x.id===S.chat)||CHATS[0];
+  return `
+  <h1 class="page-title">Mes échanges</h1>
+  <p class="page-sub">Discutez avec vos formateurs et votre espace de filière.</p>
+  <div class="chat-layout">
+    <div>
+      ${CHATS.map(x=>`
+        <button class="conv ${x.id===c.id?'active':''}" onclick="S.chat=${x.id};render()">
+          <div class="avatar" style="${x.id===0?'background:var(--violet)':''}">${x.id===0?ic('users').replace('class="icon','class="icon" style="width:20px;height:20px;color:#fff;" data-x="'):initials(x.nom)}</div>
+          <div class="grow"><b>${x.nom}</b><div class="small muted">${x.sub}</div></div>
+        </button>`).join("")}
+      <div class="card small muted" style="margin-top:10px">${ic('info')} Les formateurs répondent généralement sous 24 h ouvrables.</div>
+    </div>
+    <div class="chat-panel">
+      <div class="chat-head">
+        <div class="avatar">${c.id===0?'G':initials(c.nom)}</div>
+        <div><b>${c.nom}</b><div class="small muted">${c.sub}</div></div>
+      </div>
+      <div class="chat-body" id="chatBody">
+        ${c.msgs.map(m=>`<div class="bubble ${m.me?'me':'them'}">${!m.me?`<small>${m.a}</small>`:''}${m.t}</div>`).join("")}
+      </div>
+      <form class="chat-input" onsubmit="event.preventDefault();sendChat(this)">
+        <input name="m" placeholder="Écrire un message…" autocomplete="off" required>
+        <button class="btn btn-primary" style="border-radius:999px;padding:10px 16px" type="submit">${ic('send')}</button>
+      </form>
+    </div>
+  </div>`;
+}
+function sendChat(form){
+  const v=form.m.value.trim();if(!v)return;
+  const c=CHATS.find(x=>x.id===S.chat)||CHATS[0];
+  c.msgs.push({me:true,a:"Moi",t:v});
+  render();
+  setTimeout(()=>{const b=$("chatBody");if(b)b.scrollTop=b.scrollHeight},0);
+}
+
+function pageProfil(){
+  const u=S.user;
+  const n=u.notif;
+  return `
+  <div class="card" style="text-align:center;padding:26px">
+    <div class="avatar lg" style="margin:0 auto 12px">${initials(u.nom)}</div>
+    <h2>${u.nom}</h2>
+    <p class="muted">${u.email}</p>
+    <div class="row wrap gap" style="justify-content:center;margin-top:12px">
+      <span class="badge">${u.filiere}</span><span class="badge">${u.annee}</span><span class="badge">${u.region}</span>
+    </div>
+    <button class="btn btn-outline" style="margin-top:16px" onclick="openEditProfil()">${ic('edit')} Modifier mon profil</button>
+  </div>
+  <div class="card">
+    <h4 style="margin-bottom:8px">Informations personnelles</h4>
+    <div class="list-item"><div class="qicon">${ic('user')}</div><div class="grow"><div class="small muted">Tranche d’âge</div><b>${u.age}</b></div></div>
+    <div class="list-item"><div class="qicon">${ic('pin')}</div><div class="grow"><div class="small muted">Région / zone</div><b>${u.region}</b></div></div>
+    <div class="list-item"><div class="qicon">${ic('graduation')}</div><div class="grow"><div class="small muted">Filière & année</div><b>${u.filiere} · ${u.annee}</b></div></div>
+    <div class="list-item"><div class="qicon">${ic('shield')}</div><div class="grow"><div class="small muted">Matricule</div><b>${u.matricule}</b></div></div>
+    <div class="list-item"><div class="qicon">${ic('phone')}</div><div class="grow"><div class="small muted">Téléphone</div><b>${u.tel||'Non renseigné'}</b></div></div>
+  </div>
+  <div class="card">
+    <h4 style="margin-bottom:6px">Notifications</h4>
+    ${[["annonces","Nouvelles annonces"],["events","Rappels d’événements"],["admin","Démarches administratives"],["messages","Messages des formateurs"]].map(([k,l])=>`
+      <div class="switch-row"><span>${l}</span><button class="toggle ${n[k]?'on':''}" onclick="toggleNotif('${k}')" aria-label="${l}"></button></div>`).join("")}
+  </div>
+  <div class="card">
+    <button class="btn btn-danger btn-block" onclick="logout()">${ic('logout')} Se déconnecter</button>
+  </div>
+  `;
+}
+function toggleNotif(k){S.user.notif[k]=!S.user.notif[k];render()}
+function logout(){S.user=null;S.google=null;toast("Vous êtes déconnecté");go("/")}
+function openEditProfil(){
+  const u=S.user;
+  openModal(`
+    <div class="modal-head"><h3>Modifier mon profil</h3><button class="icon-btn" style="width:36px;height:36px" onclick="closeModal()">${ic('x')}</button></div>
+    <form onsubmit="event.preventDefault();saveEdit(this)">
+      <div class="field"><label>Nom complet</label><input name="nom" value="${u.nom}" required></div>
+      <div class="field"><label>Téléphone</label><input name="tel" value="${u.tel}" placeholder="06 XX XX XX XX"></div>
+      <div class="field"><label>Filière</label><select name="filiere">${FILIERES.map(f=>`<option ${f===u.filiere?'selected':''}>${f}</option>`).join("")}</select></div>
+      <div class="field"><label>Année</label><select name="annee"><option ${u.annee==='1ère année'?'selected':''}>1ère année</option><option ${u.annee==='2ème année'?'selected':''}>2ème année</option></select></div>
+      <div class="field"><label>Région</label><select name="region">${REGIONS.map(r=>`<option ${r===u.region?'selected':''}>${r}</option>`).join("")}</select></div>
+      <button class="btn btn-primary btn-block" type="submit">${ic('check')} Enregistrer</button>
+    </form>
+  `);
+}
+function saveEdit(form){
+  const f=Object.fromEntries(new FormData(form).entries());
+  Object.assign(S.user,f);closeModal();toast("Profil mis à jour ✔");render();
+}
+
+/* ============ DÉMARRAGE ============ */
+render();
+</script>
 </body>
 </html>
